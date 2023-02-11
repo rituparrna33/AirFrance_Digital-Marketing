@@ -1,0 +1,101 @@
+---
+title: "DM"
+output: html_document
+date: "`r Sys.Date()`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+
+getwd()
+getwd()
+
+# Clear All Variables & Clear Screen
+rm(list=ls())
+cat("\014")
+
+#Importing the file
+data= read.csv("airfrance.csv")
+str(data)
+summary(data)
+
+library(dplyr)
+unique(data$Publisher.Name)
+table<-data %>% 
+  group_by(data$Publisher.Name) %>%
+  summarise ( avgCTR=sum(Clicks)/sum(Impressions), avgCPC=sum(Total.Cost)/sum(Clicks),
+              avgConVRate=sum(Total.Volume.of.Bookings)/sum(Clicks),
+              avgCostPConv=round(sum(Total.Cost)/sum(Total.Volume.of.Bookings),0),
+              TotalCost=sum(Total.Cost))
+
+table
+table$final=table$avgCTR*table$avgConVRate
+table
+#get more funding:(interaction clicktrhough*conversion) highest
+#Yahoo-US,MSN Global,MSN US snce high final ratio, we will deploy more funding
+#improve probability of conversion:the one with low conversion rate,Overture Global and Overture-US
+#CPC reduce for high cost per clicks like Google-US and Google-Global
+
+#Question 2   
+overturedata<-subset(data,(Publisher.Name=='Overture - Global'| Publisher.Name=='Overture - US')& Total.Cost>=2000)
+overturedata  
+overturedata%>%group_by(overturedata$Category)%>%
+  summarise ( avgCTR=sum(Clicks)/sum(Impressions), avgCPC=sum(Total.Cost)/sum(Clicks),
+              avgConVRate=sum(Total.Volume.of.Bookings)/sum(Clicks),
+              avgCostPConv=round(sum(Total.Cost)/sum(Total.Volume.of.Bookings),0),
+              TotalCost=sum(Total.Cost))
+
+#Question 3: 
+#Exact Match for Google Global
+exact<-subset(data, Publisher.Name=='Google - Global' & Match.Type=='Exact')
+exact%>%
+  summarise ( avgCTR=sum(Clicks)/sum(Impressions), avgCPC=sum(Total.Cost)/sum(Clicks),
+              avgConVRate=sum(Total.Volume.of.Bookings)/sum(Clicks),
+              avgCostPConv=round(sum(Total.Cost)/sum(Total.Volume.of.Bookings),0),
+              TotalImpressions=sum(Impressions),
+              TotalClicks=sum(Clicks),
+              TotalCost=sum(Total.Cost))
+#Broad Match for Google Global
+broad<-subset(data, Publisher.Name=='Google - Global' & Match.Type=='Broad')
+broad%>%
+  summarise ( avgCTR=sum(Clicks)/sum(Impressions), avgCPC=sum(Total.Cost)/sum(Clicks),
+              avgConVRate=sum(Total.Volume.of.Bookings)/sum(Clicks),
+              avgCostPConv=round(sum(Total.Cost)/sum(Total.Volume.of.Bookings),0),
+              TotalImpressions=sum(Impressions),
+              TotalClicks=sum(Clicks),
+              TotalCost=sum(Total.Cost))
+#Exact Match for Google US
+
+exact<-subset(data, Publisher.Name=='Google - US' & Match.Type=='Exact')
+exact%>%
+  summarise ( avgCTR=sum(Clicks)/sum(Impressions), avgCPC=sum(Total.Cost)/sum(Clicks),
+              avgConVRate=sum(Total.Volume.of.Bookings)/sum(Clicks),
+              avgCostPConv=round(sum(Total.Cost)/sum(Total.Volume.of.Bookings),0),
+              TotalImpressions=sum(Impressions),
+              TotalClicks=sum(Clicks),
+              TotalCost=sum(Total.Cost))
+
+#Broad Match for Google US
+exact<-subset(data, Publisher.Name=='Google - US' & Match.Type=='Broad')
+exact%>%
+  summarise ( avgCTR=sum(Clicks)/sum(Impressions), avgCPC=sum(Total.Cost)/sum(Clicks),
+              avgConVRate=sum(Total.Volume.of.Bookings)/sum(Clicks),
+              avgCostPConv=round(sum(Total.Cost)/sum(Total.Volume.of.Bookings),0),
+              TotalImpressions=sum(Impressions),
+              TotalClicks=sum(Clicks),
+              TotalCost=sum(Total.Cost))
+#Google Global Exact vs Broad
+#Google US Exact vs Broad
+##Google US  vs Google Global Exact
+##Google US  vs Google Global Broad
+
+
+
